@@ -1,9 +1,10 @@
 # coding=utf-8
+import os
 import unittest
 import numpy as np
 from keras.datasets import mnist
 from digitnotdigit import DigitNotDigit
-from utilities import normalized_mnist
+from utilities import load_normalized_mnist, load_notmnist
 
 
 class TestDigitNotDigit(unittest.TestCase):
@@ -11,7 +12,8 @@ class TestDigitNotDigit(unittest.TestCase):
     def setUpClass(cls):
         cls.random_test_data = np.random.rand(10000, 28, 28, 1)
         (cls.x_train, cls.y_train), (cls.x_test, cls.y_test) = \
-            normalized_mnist()
+            load_normalized_mnist()
+        cls.notmnist = load_notmnist(normalized=True)
 
     def setUp(self):
         self.classifier = DigitNotDigit()
@@ -25,6 +27,10 @@ class TestDigitNotDigit(unittest.TestCase):
         predicted_label = self.classifier.predict(self.x_test)
         self.assertGreater(sum(predicted_label), 9500)
 
+        # notMNIST test 10k. #label 1 = 3430
+        predicted_label = self.classifier.predict(self.notmnist)
+        self.assertLess(sum(predicted_label), 3431)
+
     def test_evaluate_score(self):
         # random data
         acc, conf = self.classifier.evaluate_score(
@@ -34,7 +40,7 @@ class TestDigitNotDigit(unittest.TestCase):
         self.assertEqual(conf[1][0], 0)
         self.assertEqual(conf[1][1], 0)
 
-        # mnist test 10k
+        # MNIST test 10k
         acc, conf = self.classifier.evaluate_score(
             self.x_test,
             np.ones(len(self.x_test)))
@@ -42,5 +48,10 @@ class TestDigitNotDigit(unittest.TestCase):
         self.assertEqual(conf[0][0], 0)
         self.assertEqual(conf[0][1], 0)
 
-
-
+        # notmnist 10K
+        acc, conf = self.classifier.evaluate_score(
+            self.notmnist,
+            np.zeros(len(self.notmnist)))
+        self.assertGreater(acc, 0.65)
+        self.assertEqual(conf[1][0], 0)
+        self.assertEqual(conf[1][1], 0)
