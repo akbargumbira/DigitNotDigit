@@ -3,3 +3,4 @@ venv/
 *.pyc
 .idea/
 data/notMNIST.pkl
+.ipynb_checkpoints

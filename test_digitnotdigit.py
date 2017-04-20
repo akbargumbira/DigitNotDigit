@@ -4,31 +4,31 @@ import unittest
 import numpy as np
 from keras.datasets import mnist
 from digitnotdigit import DigitNotDigit
-from utilities import load_normalized_mnist, load_notmnist
+from utilities import load_mnist, load_notmnist
 
 
 class TestDigitNotDigit(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.random_test_data = np.random.rand(10000, 28, 28, 1)
-        (cls.x_train, cls.y_train), (cls.x_test, cls.y_test) = \
-            load_normalized_mnist()
-        cls.notmnist = load_notmnist(normalized=True)
+        (cls.x_train, cls.y_train), (cls.x_test, cls.y_test) = load_mnist(normalized=True)
+        cls.notmnist, cls.notmnist_label = load_notmnist(normalized=True)
 
     def setUp(self):
         self.classifier = DigitNotDigit()
 
     def test_predict(self):
         # Predict 10k random image, Label with 1 should be less than 500
-        predicted_label = self.classifier.predict(self.random_test_data)
+        predicted_label, digit_label = self.classifier.predict(
+            self.random_test_data)
         self.assertLess(sum(predicted_label), 500)
 
         # Predict with MNIST, label with 1 should be greater than 9500
-        predicted_label = self.classifier.predict(self.x_test)
+        predicted_label, digit_label = self.classifier.predict(self.x_test)
         self.assertGreater(sum(predicted_label), 9500)
 
         # notMNIST test 10k. #label 1 = 3430
-        predicted_label = self.classifier.predict(self.notmnist)
+        predicted_label, digit_label = self.classifier.predict(self.notmnist)
         self.assertLess(sum(predicted_label), 3431)
 
     def test_evaluate_score(self):

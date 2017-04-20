@@ -9,6 +9,8 @@ from keras import backend as K
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+from digitnotdigit import DigitNotDigit
+from utilities import load_notmnist
 
 
 def print_stats(predictions):
@@ -44,38 +46,38 @@ def print_stats(predictions):
     print('# max/(sum-max) > 500', np.where(max_rest > 500)[0].size)
     print('# max/(sum-max) > 1000', np.where(max_rest > 1000)[0].size)
 
-batch_size = 128
-num_classes = 10
-epochs = 5
+# batch_size = 128
+# num_classes = 10
+# epochs = 5
+# #
+# # # input image dimensions
+# img_rows, img_cols = 28, 28
 #
-# # input image dimensions
-img_rows, img_cols = 28, 28
-
-# the data, shuffled and split between train and test sets (60k training, 10k test)
-(x_train, y_train), (x_test, y_test) = mnist.load_data()
-cv2.imshow('tes', x_train[0:10].reshape(28*10, 28))
-cv2.waitKey(0)
-
-if K.image_data_format() == 'channels_first':
-    x_train = x_train.reshape(x_train.shape[0], 1, img_rows, img_cols)
-    x_test = x_test.reshape(x_test.shape[0], 1, img_rows, img_cols)
-    input_shape = (1, img_rows, img_cols)
-else:
-    x_train = x_train.reshape(x_train.shape[0], img_rows, img_cols, 1)
-    x_test = x_test.reshape(x_test.shape[0], img_rows, img_cols, 1)
-    input_shape = (img_rows, img_cols, 1)
-
-x_train = x_train.astype('float32')
-x_test = x_test.astype('float32')
-x_train /= 255
-x_test /= 255
+# # the data, shuffled and split between train and test sets (60k training, 10k test)
+# (x_train, y_train), (x_test, y_test) = mnist.load_data()
+# cv2.imshow('tes', x_train[0:10].reshape(28*10, 28))
+# cv2.waitKey(0)
+#
+# if K.image_data_format() == 'channels_first':
+#     x_train = x_train.reshape(x_train.shape[0], 1, img_rows, img_cols)
+#     x_test = x_test.reshape(x_test.shape[0], 1, img_rows, img_cols)
+#     input_shape = (1, img_rows, img_cols)
+# else:
+#     x_train = x_train.reshape(x_train.shape[0], img_rows, img_cols, 1)
+#     x_test = x_test.reshape(x_test.shape[0], img_rows, img_cols, 1)
+#     input_shape = (img_rows, img_cols, 1)
+#
+# x_train = x_train.astype('float32')
+# x_test = x_test.astype('float32')
+# x_train /= 255
+# x_test /= 255
 # print('x_train shape:', x_train.shape)
 # print(x_train.shape[0], 'train samples')
 # print(x_test.shape[0], 'test samples')
 #
 # # convert class vectors to binary class matrices
-y_train = keras.utils.to_categorical(y_train, num_classes)
-y_test = keras.utils.to_categorical(y_test, num_classes)
+# y_train = keras.utils.to_categorical(y_train, num_classes)
+# y_test = keras.utils.to_categorical(y_test, num_classes)
 #
 # # # Training
 # model = Sequential()
@@ -105,46 +107,50 @@ y_test = keras.utils.to_categorical(y_test, num_classes)
 
 # Experiment with random image 10k, 28 * 28 images
 # Generate random test
-n_random_image = 10000
-random_test_data = np.random.rand(n_random_image, 28, 28, 1)
-
-# Load model
-model = load_model('model/cnn_mnist_5_sigmoid.h5')
-
-print('Predictions of training data 60k..............')
-predicts_training = model.predict(x_train)
-print_stats(predicts_training)
-# plt.plot(np.arange(len(x_train)), np.max(predicts_training, 1), 'ro')
-# plt.show()
-# plt.plot(np.arange(len(x_train)), np.average(predicts_training, 1), 'ro')
-# plt.show()
-print('Predictions of test data 10k..............')
-predicts_test = model.predict(x_test)
-print_stats(predicts_test)
-# plt.plot(np.arange(len(x_test)), np.max(predicts_test, 1), 'ro')
-# plt.show()
-# plt.plot(np.arange(len(x_test)), np.average(predicts_test, 1), 'ro')
-# plt.show()
-print('Predictions of random test data 10k...........')
-predicts_random = model.predict(random_test_data)
-print_stats(predicts_random)
-# plt.plot(np.arange(n_random_image), np.max(predicts_random, 1), 'ro')
-# plt.show()
-# plt.plot(np.arange(n_random_image), np.average(predicts_random, 1), 'ro')
-# plt.show()
-
-
-# Show random images that have max > 0.05
-# random_might_be_digit = random_test_data[
-#     np.where(np.max(predicts_random, 1) > 0.04)[0]]
-# random_might_be_digit *= 255
-# cv2.imshow('tes', random_might_be_digit.reshape(28*len(random_might_be_digit), 28))
-# cv2.waitKey(0)
-
+# n_random_image = 10000
+# random_test_data = np.random.rand(n_random_image, 28, 28, 1)
 #
-# # x_train = random_test_data * 255
-# # cv2.imshow('tes', np.concatenate(
-# #     (x_train[0], x_train[1], x_train[2], x_train[3], x_train[4],
-# #      x_train[5], x_train[6], x_train[7], x_train[8], x_train[9]),
-# #     axis=1))
+# # Load model
+# model = load_model('model/cnn_mnist_5_sigmoid.h5')
+#
+# print('Predictions of training data 60k..............')
+# predicts_training = model.predict(x_train)
+# print_stats(predicts_training)
+# # plt.plot(np.arange(len(x_train)), np.max(predicts_training, 1), 'ro')
+# # plt.show()
+# # plt.plot(np.arange(len(x_train)), np.average(predicts_training, 1), 'ro')
+# # plt.show()
+# print('Predictions of test data 10k..............')
+# predicts_test = model.predict(x_test)
+# print_stats(predicts_test)
+# # plt.plot(np.arange(len(x_test)), np.max(predicts_test, 1), 'ro')
+# # plt.show()
+# # plt.plot(np.arange(len(x_test)), np.average(predicts_test, 1), 'ro')
+# # plt.show()
+# print('Predictions of random test data 10k...........')
+# predicts_random = model.predict(random_test_data)
+# print_stats(predicts_random)
+# # plt.plot(np.arange(n_random_image), np.max(predicts_random, 1), 'ro')
+# # plt.show()
+# # plt.plot(np.arange(n_random_image), np.average(predicts_random, 1), 'ro')
+# # plt.show()
+#
+#
+# # Show random images that have max > 0.05
+# # random_might_be_digit = random_test_data[
+# #     np.where(np.max(predicts_random, 1) > 0.04)[0]]
+# # random_might_be_digit *= 255
+# # cv2.imshow('tes', random_might_be_digit.reshape(28*len(random_might_be_digit), 28))
 # # cv2.waitKey(0)
+#
+# #
+# # # x_train = random_test_data * 255
+# # # cv2.imshow('tes', np.concatenate(
+# # #     (x_train[0], x_train[1], x_train[2], x_train[3], x_train[4],
+# # #      x_train[5], x_train[6], x_train[7], x_train[8], x_train[9]),
+# # #     axis=1))
+# # # cv2.waitKey(0)
+
+
+classifier = DigitNotDigit()
+notmnist_dataset, notmnist_label = load_notmnist(normalized=True)
