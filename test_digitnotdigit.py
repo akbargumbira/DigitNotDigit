@@ -2,7 +2,6 @@
 import os
 import unittest
 import numpy as np
-from keras.datasets import mnist
 from digitnotdigit import DigitNotDigit
 from utilities import load_mnist, load_notmnist
 
@@ -11,8 +10,9 @@ class TestDigitNotDigit(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.random_test_data = np.random.rand(10000, 28, 28, 1)
-        (cls.x_train, cls.y_train), (cls.x_test, cls.y_test) = load_mnist(normalized=True)
-        cls.notmnist, cls.notmnist_label = load_notmnist(normalized=True)
+        (cls.x_train, cls.y_train), (cls.x_test, cls.y_test) = load_mnist(
+            scaled=True)
+        cls.notmnist, cls.notmnist_label = load_notmnist(scaled=True)
 
     def setUp(self):
         self.classifier = DigitNotDigit()

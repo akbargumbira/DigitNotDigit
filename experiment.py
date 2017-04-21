@@ -153,4 +153,4 @@ def print_stats(predictions):
 
 
 classifier = DigitNotDigit()
-notmnist_dataset, notmnist_label = load_notmnist(normalized=True)
+notmnist_dataset, notmnist_label = load_notmnist(scaled=True)

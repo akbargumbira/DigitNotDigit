@@ -15,8 +15,8 @@ LETTER_LABELS = {
 }
 
 
-def load_mnist(normalized=False):
-    """Normalize mnist data to range [0, 1] and change the label to
+def load_mnist(scaled=False):
+    """Scale mnist data to range [0, 1] and change the label to
     binary categorical."""
     img_rows, img_cols = 28, 28
     num_classes = 10
@@ -29,7 +29,7 @@ def load_mnist(normalized=False):
         x_test = x_test.reshape(x_test.shape[0], img_rows, img_cols, 1)
     x_train = x_train.astype('float32')
     x_test = x_test.astype('float32')
-    if normalized:
+    if scaled:
         x_train /= 255
         x_test /= 255
     y_train = to_categorical(y_train, num_classes)
@@ -57,12 +57,12 @@ def save_notmnist():
         pickle.dump((dataset, np.array(data_labels)), f)
 
 
-def load_notmnist(normalized=False):
+def load_notmnist(scaled=False):
     """Load not MNIST data."""
     input_path = os.path.join(os.path.curdir, 'data', 'notMNIST.pkl')
     with open(input_path, 'rb') as f:
         dataset, data_label = pickle.load(f)
-    if normalized:
+    if scaled:
         dataset /= 255
     return dataset, data_label
 

@@ -6,10 +6,10 @@ from sklearn.metrics import accuracy_score, confusion_matrix
 
 class DigitNotDigit(object):
     """Class DigitNotDigit."""
-    def __init__(self):
+    def __init__(self, model='model/cnn_mnist_5_sigmoid.h5', threshold=200):
         """The constructor."""
-        self._model = load_model('model/cnn_mnist_5_sigmoid.h5')
-        self._threshold = 200
+        self._model = load_model(model)
+        self._threshold = threshold
 
     def predict(self, data):
         """Predict the given data whether it's a digit (1) or not (0).
